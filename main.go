@@ -23,8 +23,8 @@ func main() {
 
 	defer db.DisconnectMongoDB(client)
 
-	var dbname string = "gen-ai-dev"
-	var collname string = "access_control"
+	var dbname string = "dbname"
+	var collname string = "collectionname"
 	//tahke database name and collection name as input
 	//fmt.Println("Enter DB Name: ")
 	//fmt.Scanln(&dbname)
@@ -60,8 +60,8 @@ func main() {
 
 	// Update the date fields
 	updatedFields := bson.M{}
-	migration.UpdateDate(result, updatedFields, "access_start_date", time)
-	migration.UpdateDate(result, updatedFields, "access_end_date", time)
+	migration.UpdateDate(result, updatedFields, "fieldName", time)
+	migration.UpdateDate(result, updatedFields, "fieldName", time)
 
 	if len(updatedFields) > 0 {
 		_, err = coll.UpdateOne(context.TODO(), bson.M{"_id": objID}, bson.M{"$set": updatedFields})
