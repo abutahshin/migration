@@ -69,15 +69,6 @@ func main() {
 			panic(err)
 		}
 		fmt.Println("Document updated successfully!")
-		result, err := db.FetchData(coll, objID)
-		if err != nil {
-			log.Fatalf("Error finding document: %v", err)
-		}
-		jsonData, err := json.MarshalIndent(result, "", "    ")
-		if err != nil {
-			log.Fatalf("Error marshaling result to JSON: %v", err)
-		}
-		fmt.Printf("Updated result in json format\n %s\n", jsonData)
 	} else {
 		fmt.Println("No date fields to update.")
 	}
