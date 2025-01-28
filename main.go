@@ -33,11 +33,11 @@ func main() {
 
 	coll := client.Database(dbname).Collection(collname)
 
-	var userID string
+	var objectID string
 
 	fmt.Println("Enter Object ID For which you want to Fetch Data: ")
-	fmt.Scanln(&userID)
-	objID, err := primitive.ObjectIDFromHex(userID)
+	fmt.Scanln(&objectID)
+	objID, err := primitive.ObjectIDFromHex(objectID)
 	if err != nil {
 		log.Fatal(err)
 	}
