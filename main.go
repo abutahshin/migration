@@ -68,7 +68,7 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
-		fmt.Println("Document updated successfully!")
+		fmt.Println("Document updated successfully.")
 	} else {
 		fmt.Println("No date fields to update.")
 	}
