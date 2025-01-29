@@ -1,10 +1,10 @@
 package db
 
 import (
-	"github.com/labstack/gommon/log"
+	"context"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"golang.org/x/net/context"
+	"log"
 )
 
 func ConnectToMongoDB(uri string) (*mongo.Client, error) {

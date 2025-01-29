@@ -1,26 +1,32 @@
 package main
 
 import (
+	"context"
 	"fmt"
-	"github.com/abutahshin/graphql/db"
-	"github.com/abutahshin/graphql/migration"
-	"github.com/goccy/go-json"
+	_ "fmt"
+	"github.com/abutahshin/migration/db"
+	"github.com/abutahshin/migration/migration"
 	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/v2/bson"
-	"golang.org/x/net/context"
 	"log"
 	"os"
 )
 
+const (
+	time = 6 * 60 * 60 * 1000
+)
+
 func main() {
+	MongoDB()
+	ArangoDB()
+}
+func MongoDB() {
 	if err := godotenv.Load(); err != nil {
 		log.Println("No .env file found")
 	}
 
 	uri := os.Getenv("MONGODB_URI")
 	client, err := db.ConnectToMongoDB(uri)
-
 	defer db.DisconnectMongoDB(client)
 
 	var dbname string = "dbname"
@@ -28,43 +34,40 @@ func main() {
 
 	coll := client.Database(dbname).Collection(collname)
 
-	var objectID string
-
-	fmt.Println("Enter Object ID For which you want to Fetch Data: ")
-	fmt.Scanln(&objectID)
-	objID, err := primitive.ObjectIDFromHex(objectID)
-	if err != nil {
-		log.Fatal(err)
-	}
-	result, err := db.FetchData(coll, objID)
-	if err != nil {
-		log.Fatalf("Error finding document: %v", err)
-	}
-
-	// Convert the result to JSON
-	jsonData, err := json.MarshalIndent(result, "", "    ")
-	if err != nil {
-		log.Fatalf("Error marshaling result to JSON: %v", err)
-	}
-	fmt.Printf("%s\n", jsonData)
-
 	//Update time code from here
 
 	// Time offset (6 hours in milliseconds)
-	time := 6 * 60 * 60 * 1000
-
+	db := client.Database(dbname)
 	// Update the date fields
-	updatedFields := bson.M{}
-	migration.MongoDbUpdateDate(result, updatedFields, "fieldName", time)
-	migration.MongoDbUpdateDate(result, updatedFields, "fieldName", time)
+	fieldsToUpdate := []string{"created_at", "otp_sent_time"}
+	migration.MongoDbUpdateDate(context.Background(), fieldsToUpdate, 1, db, coll, collname, time)
+}
+func ArangoDB() {
 
-	if len(updatedFields) > 0 {
-		_, err = coll.UpdateOne(context.TODO(), bson.M{"_id": objID}, bson.M{"$set": updatedFields})
-		if err != nil {
-			panic(err)
-		}
-		fmt.Println("Document updated successfully.")
-	} else {
-		fmt.Println("No date fields to update.")
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
 	}
+	arango_URI := os.Getenv("ARANGODB_URI")
+	arangoDB_uname := os.Getenv("ARANGODB_USERNAME")
+	arangoDB_pwd := os.Getenv("ARANGODB_PASSWORD")
+
+	client, err := db.ConnectToArangoDB(arango_URI, arangoDB_uname, arangoDB_pwd)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+	Db_Name := "shikho"
+	db, err := client.Database(nil, Db_Name) // Change database name
+	if err != nil {
+		log.Fatalf("Failed to open database: %v", err)
+	}
+	collName := "accounts"
+	//Select collection
+	coll, err := db.Collection(nil, collName) // Change collection name
+	if err != nil {
+		log.Fatalf("Failed to open collection: %v", err)
+	}
+	fieldsToUpdate := []string{"created_at", "otp_sent_time"} // Change the field name
+	migration.ArangoDbUpdateDate(context.Background(), fieldsToUpdate, 1, db, coll, collName, time)
 }
