@@ -25,11 +25,6 @@ func main() {
 
 	var dbname string = "dbname"
 	var collname string = "collectionname"
-	//tahke database name and collection name as input
-	//fmt.Println("Enter DB Name: ")
-	//fmt.Scanln(&dbname)
-	//fmt.Println("Enter Collection Name: ")
-	//fmt.Scanln(&collname)
 
 	coll := client.Database(dbname).Collection(collname)
 
@@ -60,8 +55,8 @@ func main() {
 
 	// Update the date fields
 	updatedFields := bson.M{}
-	migration.UpdateDate(result, updatedFields, "fieldName", time)
-	migration.UpdateDate(result, updatedFields, "fieldName", time)
+	migration.MongoDbUpdateDate(result, updatedFields, "fieldName", time)
+	migration.MongoDbUpdateDate(result, updatedFields, "fieldName", time)
 
 	if len(updatedFields) > 0 {
 		_, err = coll.UpdateOne(context.TODO(), bson.M{"_id": objID}, bson.M{"$set": updatedFields})

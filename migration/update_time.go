@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func UpdateDate(result bson.M, updatedFields bson.M, fieldName string, timeOffset int) {
+func MongoDbUpdateDate(result bson.M, updatedFields bson.M, fieldName string, timeOffset int) {
 	if date, ok := result[fieldName].(primitive.DateTime); ok {
 		// Subtract 6 hours from the date
 		updatedDate := time.Unix(0, int64(date)*int64(time.Millisecond)).Add(-time.Duration(timeOffset) * time.Millisecond)
