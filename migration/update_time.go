@@ -103,7 +103,6 @@ func ArangoDbUpdateDate(ctx context.Context, fieldsToUpdate []string, nofDoc int
 		filterConditions += fmt.Sprintf("doc.%s != null", field)
 	}
 
-	//query := fmt.Sprintf("FOR doc IN %s FILTER %s AND doc.id == \"%s\" RETURN doc", collectionName, filterConditions, "005X04AV19")
 	query := fmt.Sprintf("FOR doc IN %s FILTER %s RETURN doc", collectionName, filterConditions)
 
 	cursor, err := db.Query(ctx, query, nil)
@@ -139,7 +138,6 @@ func ArangoDbUpdateDate(ctx context.Context, fieldsToUpdate []string, nofDoc int
 					log.Printf("Error parsing time for document %s: %v\n", meta.Key, err)
 					continue
 				}
-
 				// Subtract 6 hours to convert BDT to UTC
 				fieldTimeUTC := fieldTime.Add(-time.Duration(timeOffset) * time.Millisecond)
 

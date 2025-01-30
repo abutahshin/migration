@@ -2,12 +2,10 @@ package main
 
 import (
 	"context"
-	"fmt"
 	_ "fmt"
 	"github.com/abutahshin/migration/db"
 	"github.com/abutahshin/migration/migration"
 	"github.com/joho/godotenv"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"log"
 	"os"
 )
@@ -17,7 +15,7 @@ const (
 )
 
 func main() {
-	MongoDB()
+	//MongoDB()
 	ArangoDB()
 }
 func MongoDB() {
@@ -27,6 +25,9 @@ func MongoDB() {
 
 	uri := os.Getenv("MONGODB_URI")
 	client, err := db.ConnectToMongoDB(uri)
+	if err != nil {
+		log.Fatal(err)
+	}
 	defer db.DisconnectMongoDB(client)
 
 	var dbname string = "dbname"
